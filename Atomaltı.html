@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Atom Altı Parçacıklar Testi</title>
+<style>
+body {
+font-family: sans-serif;
+background-color: #f4f4f4;
+display: flex;
+justify-content: center;
+align-items: center;
+min-height: 100vh;
+margin: 0;
+padding: 20px;
+background-image: url("your_image_url.jpg"); /* Resim URL'nizi buraya yazın */
+background-size: cover; /* Resmi tüm alanı kaplayacak şekilde ölçeklendir */
+background-repeat: no-repeat; /* Resmin tekrar etmesini engelle */
+background-position: center; /* Resmi ortala */
+}
+#quiz-container {
+background-color: #fff;
+padding: 30px;
+border-radius: 8px;
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+text-align: center;
+max-width: 600px;
+width: 100%;
+}
+.question {
+margin-bottom: 20px;
+font-size: 1.1em;
+font-weight: bold;
+}
+.options {
+list-style: none;
+padding: 0;
+margin-bottom: 15px;
+}
+.options li {
+margin: 10px 0;
+}
+.options button {
+padding: 10px 20px;
+border: 1px solid #ccc;
+border-radius: 5px;
+cursor: pointer;
+width: 100%;
+text-align: left;
+background-color: #eee;
+}
+.options button:hover {
+background-color: #ddd;
+}
+#feedback {
+margin-top: 20px;
+font-weight: bold;
+}
+.correct {
+color: green;
+}
+.incorrect {
+color: red;
+}
+#next-button {
+padding: 10px 20px;
+border: none;
+border-radius: 5px;
+background-color: #007bff;
+color: white;
+cursor: pointer;
+font-size: 1em;
+margin-top: 15px;
+}
+#next-button:disabled {
+background-color: #ccc;
+cursor: not-allowed;
+}
+#results-container {
+margin-top: 30px;
+font-size: 1.2em;
+font-weight: bold;
+display: none;
+}
+</style>
+</head>
+<body>
+<div id="quiz-container">
+<h1>Atom Altı Parçacıklar Testi</h1>
+<div id="question-container"></div>
+<div id="feedback"></div>
+<button id="next-button" disabled>Sonraki Soru</button>
+<div id="results-container"></div>
+</div>
+<script>
+    const quizContainer = document.getElementById('quiz-container');
+    const questionContainer = document.getElementById('question-container');
+    const feedbackElement = document.getElementById('feedback');
+    const nextButton = document.getElementById('next-button');
+    const resultsContainer = document.getElementById('results-container');
+
+    const questions = [
+        {
+            question: "Atomun çekirdeğinde bulunmayan temel parçacık hangisidir?",
+            options: ["Proton", "Nötron", "Elektron", "Kuark", "Foton"],
+            correctAnswer: "Elektron"
+        },
+        {
+            question: "Hangi atom altı parçacığı pozitif elektrik yüküne sahiptir?",
+            options: ["Elektron", "Nötron", "Proton", "Nötrino", "Müon"],
+            correctAnswer: "Proton"
+        },
+        {
+            question: "Nötr bir atomda, proton sayısı neye eşittir?",
+            options: ["Nötron sayısına", "Elektron sayısına", "Toplam parçacık sayısına", "Kuark sayısına", "Lepton sayısına"],
+            correctAnswer: "Elektron sayısına"
+        },
+        {
+            question: "Temel kuvvetlerden hangisi atom çekirdeğini bir arada tutar?",
+            options: ["Yerçekimi", "Elektromanyetik kuvvet", "Güçlü nükleer kuvvet", "Zayıf nükleer kuvvet", "Manyetik kuvvet"],
+            correctAnswer: "Güçlü nükleer kuvvet"
+        },
+        {
+            question: "Beta bozunumu sırasında bir nötron neye dönüşür?",
+            options: ["Proton ve elektron", "Proton ve pozitron", "Sadece proton", "Sadece elektron", "Proton ve nötrino"],
+            correctAnswer: "Proton ve elektron"
+        },
+        {
+            question: "Hangi parçacık ailesi leptonları içerir?",
+            options: ["Baryonlar", "Mezonlar", "Hadronlar", "Bozonlar", "Fermiyonlar"],
+            correctAnswer: "Fermiyonlar"
+        },
+        {
+            question: "Aşağıdakilerden hangisi temel bir parçacık değildir?",
+            options: ["Elektron", "Kuark", "Foton", "Proton", "Nötrino"],
+            correctAnswer: "Proton"
+        },
+        {
+            question: "Hangi parçacık hem madde hem de antimadde özelliği gösterir?",
+            options: ["Nötron", "Proton", "Foton", "Elektron", "Nötrino"],
+            correctAnswer: "Foton"
+        },
+        {
+            question: "Higgs bozonu hangi özelliği açıklamakla ilişkilidir?",
+            options: ["Elektrik yükü", "Renk yükü", "Kütle", "Spin", "Manyetik moment"],
+            correctAnswer: "Kütle"
+        },
+        {
+            question: "Kuarklar hangi kuvvet aracılığıyla etkileşirler?",
+            options: ["Yerçekimi", "Elektromanyetik kuvvet", "Güçlü nükleer kuvvet", "Zayıf nükleer kuvvet", "Manyetik kuvvet"],
+            correctAnswer: "Güçlü nükleer kuvvet"
+        },
+        {
+            question: "Bir proton hangi temel parçacıklardan oluşur?",
+            options: ["İki yukarı kuark ve bir aşağı kuark", "Bir yukarı kuark ve iki aşağı kuark", "Üç yukarı kuark", "Üç aşağı kuark", "Bir yukarı, bir aşağı ve bir çekici kuark"],
+            correctAnswer: "İki yukarı kuark ve bir aşağı kuark"
+        },
+        {
+            question: "Antielektronun (pozitron) elektrik yükü nedir?",
+            options: ["Nötr", "Pozitif", "Negatif", "Yarı pozitif", "Yarı negatif"],
+            correctAnswer: "Pozitif"
+        },
+        {
+            question: "Nötrinolar hangi temel kuvvetle etkileşime girmezler?",
+            options: ["Yerçekimi", "Elektromanyetik kuvvet", "Güçlü nükleer kuvvet", "Zayıf nükleer kuvvet", "Hepsiyle etkileşirler"],
+            correctAnswer: "Güçlü nükleer kuvvet"
+        },
+        {
+            question: "Hangi parçacık 'haberci parçacık' olarak da bilinir ve elektromanyetik kuvveti taşır?",
+            options: ["Gluon", "W bozonu", "Z bozonu", "Foton", "Graviton"],
+            correctAnswer: "Foton"
+        },
+        {
+            question: "Hadronlar hangi temel parçacıklardan oluşur?",
+            options: ["Sadece leptonlar", "Sadece bozonlar", "Leptonlar ve bozonlar", "Kuarklar ve gluonlar", "Sadece kuarklar"],
+            correctAnswer: "Kuarklar ve gluonlar"
+        },
+        {
+            question: "Aşağıdakilerden hangisi bir mezon örneğidir?",
+            options: ["Proton", "Nötron", "Piyon", "Elektron", "Nötrino"],
+            correctAnswer: "Piyon"
+        },
+        {
+            question: "Baryon sayısı hangi parçacıklar için +1'dir?",
+            options: ["Leptonlar", "Mezonlar", "Baryonlar", "Bozonlar", "Fotonlar"],
+            correctAnswer: "Baryonlar"
+        },
+        {
+            question: "Hangi temel kuvvet radyoaktif bozunmadan sorumludur?",
+            options: ["Yerçekimi", "Elektromanyetik kuvvet", "Güçlü nükleer kuvvet", "Zayıf nükleer kuvvet", "Manyetik kuvvet"],
+            correctAnswer: "Zayıf nükleer kuvvet"
+        },
+        {
+            question: "Bir nötron hangi temel parçacıklardan oluşur?",
+            options: ["İki yukarı kuark ve bir aşağı kuark", "Bir yukarı kuark ve iki aşağı kuark", "Üç yukarı kuark", "Üç aşağı kuark", "Bir yukarı, bir aşağı ve bir çekici kuark"],
+            correctAnswer: "Bir yukarı kuark ve iki aşağı kuark"
+        },
+        {
+            question: "Hangi parçacık ailesi temel fermiyonlardan biridir ve elektronu içerir?",
+            options: ["Kuarklar", "Bozonlar", "Hadronlar", "Leptonlar", "Mezonlar"],
+            correctAnswer: "Leptonlar"
+        },
+        {
+            question: "Hangi bozon güçlü nükleer kuvvetin taşıyıcısıdır?",
+            options: ["Foton", "Gluon", "W bozonu", "Z bozonu", "Higgs bozonu"],
+            correctAnswer: "Gluon"
+        },
+        {
+            question: "Aşağıdakilerden hangisi bir lepton değildir?",
+            options: ["Elektron", "Müon", "Tau", "Nötrino", "Proton"],
+            correctAnswer: "Proton"
+        },
+        {
+            question: "Antimaddenin normal maddeden farkı temel olarak nedir?",
+            options: ["Kütle", "Spin", "Enerji", "Elektrik yükü", "Hız"],
+            correctAnswer: "Elektrik yükü"
+        },
+        {
+            question: "Hangi deney atomun çekirdeğini keşfetmiştir?",
+            options: ["Milikan yağ damlası deneyi", "Thomson katot ışını deneyi", "Rutherford altın yaprak deneyi", "Stern-Gerlach deneyi", "Michelson-Morley deneyi"],
+            correctAnswer: "Rutherford altın yaprak deneyi"
+        },
+        {
+            question: "Spin kuantum sayısı hangi atom altı parçacığının temel bir özelliğidir?",
+            options: ["Sadece elektronlar", "Sadece baryonlar", "Tüm temel fermiyonlar ve bozonlar", "Sadece hadronlar", "Sadece leptonlar"],
+            correctAnswer: "Tüm temel fermiyonlar ve bozonlar"
+        },
+        {
+            question: "Hangi parçacık evrenin karanlık madde içeriğinin bir bölümünü oluşturduğu düşünülen varsayımsal bir parçacıktır?",
+            options: ["Nötrino", "Foton", "Graviton", "WIMP", "Gluon"],
+            correctAnswer: "WIMP"
+        },
+        {
+            question: "Hangi parçacık ailesi hem temel parçacıkları hem de bileşik parçacıkları içerir?",
+            options: ["Leptonlar", "Bozonlar", "Hadronlar", "Fermiyonlar", "Mezonlar"],
+            correctAnswer: "Hadronlar"
+        },
+        {
+            question: "Bir atomun kimyasal özelliklerini temel olarak hangi parçacık belirler?",
+            options: ["Protonlar", "Nötronlar", "Elektronlar", "Kuarklar", "Gluonlar"],
+            correctAnswer: "Elektronlar"
+        },
+        {
+            question: "Hangi parçacık kütlesiz ve yüksüzdür ve ışık hızıyla hareket eder?",
+            options: ["Elektron", "Proton", "Nötron", "Foton", "Nötrino"],
+            correctAnswer: "Foton"
+        },
+        {
+            question: "Aşağıdakilerden hangisi bir fermiyon değildir?",
+            options: ["Kuark", "Lepton", "Baryon", "Mezon", "Elektron"],
+            correctAnswer: "Mezon"
+        },
+        {
+            question: "Hangi kuvvet atom çekirdeğindeki protonların birbirini itmesini engeller?",
+            options: ["Yerçekimi", "Elektromanyetik kuvvet", "Güçlü nükleer kuvvet", "Zayıf nükleer kuvvet", "Manyetik kuvvet"],
+            correctAnswer: "Güçlü nükleer kuvvet"
+        },
+        {
+            question: "Bir anti-proton hangi temel parçacıklardan oluşur?",
+            options: ["İki yukarı anti-kuark ve bir aşağı anti-kuark", "Bir yukarı anti-kuark ve iki aşağı anti-kuark", "Üç yukarı anti-kuark", "Üç aşağı anti-kuark", "Bir yukarı, bir aşağı ve bir çekici anti-kuark"],
+            correctAnswer: "İki yukarı anti-kuark ve bir aşağı anti-kuark"
+        },
+        {
+            question: "Hangi parçacıklar 'Madde parçacıkları' olarak sınıflandırılır?",
+            options: ["Bozonlar", "Vektör bozonları", "Fermiyonlar", "Skalar bozonlar", "Ayar bozonları"],
+            correctAnswer: "Fermiyonlar"
+        },
+        {
+            question: "Hangi bozonlar zayıf nükleer kuvvetin taşıyıcılarıdır?",
+            options: ["Foton ve Gluon", "Sadece Foton", "Sadece Gluon", "W ve Z bozonları", "Sadece Higgs bozonu"],
+            correctAnswer: "W ve Z bozonları"
+        },
+        {
+            question: "Hangi parçacık ailesi hem tamsayı hem de yarı tamsayı spine sahip parçacıkları içerir?",
+            options: ["Leptonlar", "Bozonlar", "Hadronlar", "Fermiyonlar", "Hiçbiri"],
+            correctAnswer: "Hiçbiri"
+        },
+        {
+            question: "Aşağıdakilerden hangisi Standart Model'in temel parçacıklarından biri değildir?",
+            options: ["Elektron", "Yukarı kuark", "Foton", "Alfa parçacığı", "Nötrino"],
+            correctAnswer: "Alfa parçacığı"
+        },
+        {
+            question: "Hangi parçacığın varlığı teorik olarak öngörülmüş ancak henüz doğrudan gözlemlenmemiştir ve yerçekimi kuvvetini taşıdığı düşünülmektedir?",
+            options: ["Graviton", "Takyon", "Aksiyon", "Manyetik monopol", "WIMP"],
+            correctAnswer: "Graviton"
+        },
+        {
+            question: "Hangi süreçte bir atom çekirdeği daha kararlı bir duruma geçmek için enerji yayar?",
+            options: ["İyonlaşma", "Uyarılma", "Radyoaktif bozunma", "Füzyon", "Fisyon"],
+            correctAnswer: "Radyoaktif bozunma"
+        },
+        {
+            question: "Hangi parçacıklar renk yüküne sahiptir?",
+            options: ["Leptonlar", "Bozonlar", "Kuarklar", "Fotonlar", "Nötrinolar"],
+            correctAnswer: "Kuarklar"
+        },
+        {
+            question: "Hangi kavram kuarkların tek başına gözlemlenememesini açıklar?",
+            options: ["Kuantum dolanıklık", "Heisenberg belirsizlik ilkesi", "Asimptotik özgürlük", "Renk hapsi", "Süpersimetri"],
+            correctAnswer: "Renk hapsi"
+        },
+        {
+            question: "Hangi parçacıklar elementer fermiyonların üçüncü neslini oluşturur?",
+            options: ["Elektron, müon, tau", "Yukarı, aşağı, çekici", "Elektron nötrino, müon nötrino, tau nötrino", "Güzellik, üst, tau", "Güzellik, üst, tau nötrino"],
+            correctAnswer: "Güzellik, üst, tau nötrino"
+        },
+        {
+            question: "Hangi simetri kırılması, temel parçacıkların kütle kazanmasına yol açtığı düşünülen mekanizmanın temelini oluşturur?",
+            options: ["CP simetrisi", "Parite simetrisi", "Zaman tersinirliği simetrisi", "Elektrozayıf simetri", "Baryon sayısı korunumu"],
+            correctAnswer: "Elektrozayıf simetri"
+        },
+        {
+            question: "Hangi parçacık ailesi sadece temel parçacıkları içerir ve güçlü nükleer kuvvetle etkileşime girmez?",
+            options: ["Baryonlar", "Mezonlar", "Leptonlar", "Hadronlar", "Nükleonlar"],
+            correctAnswer: "Leptonlar"
+        },
+        {
+            question: "Hangi fiziksel nicelik, atom altı parçacıkların etkileşimlerinde her zaman korunur?",
+            options: ["Kütle", "Hız", "Konum", "Elektrik yükü", "Manyetik alan"],
+            correctAnswer: "Elektrik yükü"
+        },
+        {
+            question: "Hangi parçacıklar atom çekirdeğindeki nükleonları oluşturur?",
+            options: ["Elektronlar ve protonlar", "Protonlar ve nötronlar", "Nötronlar ve elektronlar", "Kuarklar ve leptonlar", "Bozonlar ve fermiyonlar"],
+            correctAnswer: "Protonlar ve nötronlar"
+        },
+        {
+            question: "Hangi varsayımsal parçacık süpersimetri teorilerinde öngörülmektedir ve bilinen her temel parçacığın bir 'süper partneri' olduğu düşünülmektedir?",
+            options: ["Aksiyon", "Skalarm", "Süperiletken", "Süperparçacık", "Manyetik monopol"],
+            correctAnswer: "Süperparçacık"
+        },
+        {
+            question: "Hangi süreçte hafif atom çekirdekleri birleşerek daha ağır bir çekirdek oluşturur ve büyük miktarda enerji açığa çıkarır?",
+            options: ["Fisyon", "Bozunma", "İyonlaşma", "Füzyon", "Uyarılma"],
+            correctAnswer: "Füzyon"
+        },
+        {
+            question: "Hangi parçacıklar Standart Model'de kütlesiz olarak kabul edilir?",
+            options: ["Elektronlar ve kuarklar", "W ve Z bozonları", "Higgs bozonu", "Fotonlar ve gluonlar", "Tüm fermiyonlar"],
+            correctAnswer: "Fotonlar ve gluonlar"
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+    let correctAnswers = 0;
+    let canAnswer = true;
+
+    function loadQuestion() {
+        if (!questions || questions.length === 0) {
+            questionContainer.innerHTML = "Soru bulunamadı.";
+            return;
+        }
+
+        const currentQuestion = questions?.[currentQuestionIndex];
+
+        if (!currentQuestion) {
+            showResults();
+            return;
+        }
+
+        questionContainer.innerHTML = `<div class="question">${currentQuestion.question}</div>`;
+        const optionsList = document.createElement('ul');
+        optionsList.classList.add('options');
+
+        currentQuestion.options.forEach((option, index) => {
+            const listItem = document.createElement('li');
+            const button = document.createElement('button');
+            button.textContent = option;
+            button.dataset.index = index;
+            button.addEventListener('click', checkAnswer);
+            listItem.appendChild(button);
+            optionsList.appendChild(listItem);
+        });
+
+        questionContainer.appendChild(optionsList);
+        feedbackElement.textContent = '';
+        nextButton.disabled = true;
+        canAnswer = true;
+    }
+
+    function checkAnswer(event) {
+        if (!canAnswer) return;
+
+        canAnswer = false;
+        const selectedButton = event.target;
+        const selectedAnswer = selectedButton.textContent;
+        const correctAnswer = questions?.[currentQuestionIndex]?.correctAnswer;
+
+        if (selectedAnswer === correctAnswer) {
+            feedbackElement.textContent = "Doğru!";
+            feedbackElement.classList.remove('incorrect');
+            feedbackElement.classList.add('correct');
+            correctAnswers++;
+        } else {
+            feedbackElement.textContent = `Yanlış. Doğru cevap: ${correctAnswer}`;
+            feedbackElement.classList.remove('correct');
+            feedbackElement.classList.add('incorrect');
+        }
+
+        nextButton.disabled = false;
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        loadQuestion();
+    }
+
+    function showResults() {
+        questionContainer.style.display = 'none';
+        nextButton.style.display = 'none';
+        feedbackElement.style.display = 'none';
+        resultsContainer.textContent = `Test tamamlandı! Toplam doğru cevap: ${correctAnswers} / ${questions.length}`;
+        resultsContainer.style.display = 'block';
+    }
+
+    nextButton.addEventListener('click', nextQuestion);
+
+    // Arka plan resmi ayarlama (resim_url yerine kendi resminizin URL'sini yazın)
+    document.body.style.backgroundImage = 'url("your_image_url.jpg")';
+
+    loadQuestion();
+</script>
